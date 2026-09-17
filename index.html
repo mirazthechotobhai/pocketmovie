@@ -6031,7 +6031,11 @@ function loadFeatured(){
     const realIdx=i%featItems.length;
     const div=document.createElement('div');div.className='feat-card';
     div.innerHTML=`<div class="thumb-wrap"><img src="${imgUrl(item.poster_path,'w300')}" alt="" loading="lazy" onerror="this.src='${PH}'"><span class="card-label" style="background:${typeBg(item)}">${typeLabel(item)}</span>${item.vote_average?`<span class="card-rating-badge">\u2605 ${item.vote_average.toFixed(1)}</span>`:''}</div><div class="card-body"><div class="card-title">${getTitle(item)}</div><div class="card-meta">${getYear(item)}</div></div>`;
+    div.setAttribute('role','button');
+    div.setAttribute('tabindex','0');
+    div.setAttribute('aria-label',getTitle(featItems[realIdx]));
     div.onclick=()=>{if(!carDragMoved)triggerDetailTransition(featItems[realIdx])};
+    div.onkeydown=e=>{if(e.key==='Enter'||e.key===' '||e.keyCode===13||e.keyCode===23||e.keyCode===66){e.preventDefault();triggerDetailTransition(featItems[realIdx])}};
     track.appendChild(div);
   });
   startCarousel();
@@ -6079,7 +6083,11 @@ function renderGrid(){
     const div=document.createElement('div');div.className='post-card';
     const rating=item.vote_average?item.vote_average.toFixed(1):'';
     div.innerHTML=`<div class="thumb-wrap"><img src="${imgUrl(item.poster_path)}" alt="" loading="lazy" onerror="this.src='${PH}'"><span class="card-label" style="background:${typeBg(item)}">${typeLabel(item)}</span>${rating?`<span class="card-rating-badge">\u2605 ${rating}</span>`:''}</div><div class="card-body"><div class="card-title">${getTitle(item)}</div><div class="card-meta">${getYear(item)?`<span>${getYear(item)}</span>`:''}${rating?`<span class="card-rating">\u2605 ${rating}</span>`:''}</div></div>`;
+    div.setAttribute('role','button');
+    div.setAttribute('tabindex','0');
+    div.setAttribute('aria-label',getTitle(item));
     div.onclick=()=>triggerDetailTransition(item);
+    div.onkeydown=e=>{if(e.key==='Enter'||e.key===' '||e.keyCode===13||e.keyCode===23||e.keyCode===66){e.preventDefault();triggerDetailTransition(item)}};
     grid.appendChild(div);
   });
   if(savedScrollY>0) window.scrollTo(0,savedScrollY);
@@ -7524,7 +7532,8 @@ openFromHash();
         moveFocus(direction);
         return;
       }
-      if (key === 'Enter' && document.activeElement && document.activeElement !== document.body) {
+      if ((key === 'Enter' || key === ' ' || event.keyCode === 13 || event.keyCode === 23 || event.keyCode === 66) && document.activeElement && document.activeElement !== document.body) {
+        if (document.activeElement.matches('.feat-card,.post-card')) return;
         if (document.activeElement === document.getElementById('dv-iframe')) {
           return;
         }
